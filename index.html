@@ -1,0 +1,178 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .gen-wrap { padding: 1.5rem 0; max-width: 680px; }
+  .topic-row { display: flex; gap: 10px; align-items: center; margin-bottom: 1.5rem; }
+  .topic-row input { flex: 1; font-size: 15px; }
+  .topic-row button { white-space: nowrap; font-size: 14px; padding: 0 1rem; height: 36px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+  .chip { font-size: 13px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; }
+  .chip:hover, .chip.active { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+  .scripts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 520px) { .scripts-grid { grid-template-columns: 1fr; } }
+  .script-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 10px; }
+  .script-card.loading { opacity: 0.5; pointer-events: none; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; display: inline-block; }
+  .badge-hook { background: #EEEDFE; color: #3C3489; }
+  .badge-problem { background: #FAECE7; color: #712B13; }
+  .badge-value { background: #E1F5EE; color: #085041; }
+  .badge-cta { background: #FAEEDA; color: #633806; }
+  .section { font-size: 13.5px; line-height: 1.55; color: var(--color-text-primary); }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+  .value-list { padding-left: 1.1rem; }
+  .value-list li { font-size: 13.5px; line-height: 1.6; color: var(--color-text-primary); }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 10px; }
+  .timer { font-size: 12px; color: var(--color-text-secondary); }
+  .copy-btn { font-size: 12px; padding: 4px 10px; }
+  .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary); font-size: 14px; }
+  .empty-state i { font-size: 32px; display: block; margin-bottom: 10px; color: var(--color-text-secondary); opacity: 0.4; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--color-border-secondary); border-top-color: var(--color-text-info); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: -3px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status-bar { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; min-height: 20px; }
+  .card-num { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; }
+  .copied { color: var(--color-text-success) !important; }
+</style>
+
+<div class="gen-wrap" role="main">
+  <h2 class="sr-only">Instagram Reels Script Generator for Faceless AI UGC</h2>
+
+  <div class="topic-row">
+    <input type="text" id="topicInput" placeholder="Enter a topic or leave blank for AI UGC..." value="Faceless AI UGC content" />
+    <button onclick="generateReels()"><span id="btn-label">Generate reels</span> ↗</button>
+  </div>
+
+  <div class="chips" id="quickTopics">
+    <span class="chip active" onclick="setChip(this, 'Faceless AI UGC content')">Faceless AI UGC</span>
+    <span class="chip" onclick="setChip(this, 'AI avatar tools for creators')">AI avatar tools</span>
+    <span class="chip" onclick="setChip(this, 'Affiliate marketing with faceless content')">Affiliate + faceless</span>
+    <span class="chip" onclick="setChip(this, 'Skincare UGC with AI')">Skincare UGC</span>
+    <span class="chip" onclick="setChip(this, 'Earn money as a faceless creator')">Earn as faceless creator</span>
+    <span class="chip" onclick="setChip(this, 'AI tools for beauty creators')">AI + beauty</span>
+  </div>
+
+  <div class="status-bar" id="statusBar"></div>
+
+  <div class="scripts-grid" id="scriptsGrid">
+    <div class="empty-state">
+      <i class="ti ti-video" aria-hidden="true"></i>
+      Hit "Generate reels" to create 4 scroll-stopping scripts
+    </div>
+  </div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are a Reels/TikTok/Shorts script generator for AI UGC and faceless creators. 
+Tone: conversational, high-energy, creator-friendly. Brand niches: AI UGC, faceless creators, beauty, lifestyle, tech.
+Never use corporate language or long sentences. Keep every script under 12 seconds when read aloud.
+
+For each script, return ONLY a JSON array of 4 objects. No markdown, no backticks, no preamble.
+Each object has these exact keys:
+- hook: 1 punchy sentence that stops the scroll (max 12 words)
+- problem: 1 sentence on the viewer's struggle (max 12 words)  
+- value: array of exactly 3 strings, each a fast punchy tip (max 8 words each)
+- cta: 1 clear action sentence (max 10 words)
+- angle: a 2-3 word label for this script's angle (e.g. "Beginner hook", "FOMO angle")
+- seconds: estimated seconds to read aloud as a number (must be 8-12)`;
+
+let generating = false;
+
+function setChip(el, topic) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('topicInput').value = topic;
+}
+
+function copyScript(idx, scripts) {
+  const s = scripts[idx];
+  const text = `HOOK: ${s.hook}\n\nPROBLEM: ${s.problem}\n\nVALUE:\n– ${s.value[0]}\n– ${s.value[1]}\n– ${s.value[2]}\n\nCTA: ${s.cta}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-' + idx);
+    if (btn) { btn.textContent = 'Copied!'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800); }
+  });
+}
+
+function renderCards(scripts) {
+  const grid = document.getElementById('scriptsGrid');
+  grid.innerHTML = '';
+  scripts.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'script-card';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="card-num">Script ${i+1} · <em style="font-style:normal;">${s.angle}</em></span>
+        <span class="timer"><i class="ti ti-player-play" style="font-size:12px;vertical-align:-1px;" aria-hidden="true"></i> ~${s.seconds}s</span>
+      </div>
+      <div>
+        <div class="section-label">Hook</div>
+        <div class="section"><span class="badge badge-hook" style="margin-bottom:5px;">🎣 Stop the scroll</span><br>${s.hook}</div>
+      </div>
+      <div>
+        <div class="section-label">Problem</div>
+        <div class="section"><span class="badge badge-problem" style="margin-bottom:5px;">😤 Pain point</span><br>${s.problem}</div>
+      </div>
+      <div>
+        <div class="section-label">Value</div>
+        <span class="badge badge-value" style="margin-bottom:5px;">💡 Tips</span>
+        <ul class="value-list">
+          <li>${s.value[0]}</li>
+          <li>${s.value[1]}</li>
+          <li>${s.value[2]}</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">CTA</div>
+        <div class="section"><span class="badge badge-cta" style="margin-bottom:5px;">👉 Action</span><br>${s.cta}</div>
+      </div>
+      <div class="card-footer">
+        <span style="font-size:12px;color:var(--color-text-secondary);">Ready to film</span>
+        <button class="copy-btn" id="copy-${i}" onclick="copyScript(${i}, window._lastScripts)">Copy</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+async function generateReels() {
+  if (generating) return;
+  generating = true;
+  const topic = document.getElementById('topicInput').value.trim() || 'Faceless AI UGC content';
+  const btn = document.getElementById('btn-label');
+  const status = document.getElementById('statusBar');
+  const grid = document.getElementById('scriptsGrid');
+
+  btn.innerHTML = '<span class="spinner"></span>Generating...';
+  status.innerHTML = 'Writing 4 unique scripts with different angles...';
+  grid.innerHTML = '<div class="empty-state"><span class="spinner"></span> Claude is writing your scripts...</div>';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{
+          role: 'user',
+          content: `Generate 4 Reels scripts about: "${topic}". Each must have a DIFFERENT creative angle to give variety. Return only JSON array.`
+        }]
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '[]';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const scripts = JSON.parse(clean);
+    window._lastScripts = scripts;
+    renderCards(scripts);
+    status.innerHTML = `<i class="ti ti-check" style="font-size:14px;vertical-align:-2px;color:var(--color-text-success);" aria-hidden="true"></i> 4 scripts ready — click any "Copy" to grab the full script`;
+  } catch (e) {
+    grid.innerHTML = '<div class="empty-state"><i class="ti ti-alert-circle" aria-hidden="true"></i>Something went wrong. Try again.</div>';
+    status.innerHTML = '';
+  }
+
+  btn.innerHTML = 'Generate reels ↗';
+  generating = false;
+}
+</script>
