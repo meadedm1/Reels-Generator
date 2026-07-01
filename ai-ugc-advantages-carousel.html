@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI UGC Advantages — 6-Slide Instagram Carousel · @theugcmaverik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --orange:#F07820;
+  --white:#ffffff;
+  --brown:#2A1810;
+  --black:#060606;
+}
+
+body{
+  background:#111;
+  padding:36px 20px 60px;
+  font-family:'Space Grotesk',system-ui,sans-serif;
+}
+
+/* ── Page header ── */
+.pg-title{text-align:center;color:#fff;font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.pg-sub{text-align:center;color:#666;font-size:13px;margin-bottom:10px}
+.pg-hint{
+  text-align:center;color:#F07820;font-size:12px;margin-bottom:40px;
+  font-weight:500;letter-spacing:.04em;
+}
+.pg-nav{
+  display:flex;justify-content:center;gap:10px;margin-bottom:36px;flex-wrap:wrap;
+}
+.pg-nav a{
+  background:#1e1e1e;border:1px solid #333;color:#aaa;
+  text-decoration:none;font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;
+  transition:all .15s;
+}
+.pg-nav a:hover{border-color:var(--orange);color:var(--orange)}
+
+/* ── Slide wrapper ── */
+.slides-col{display:flex;flex-direction:column;align-items:center;gap:28px}
+
+.slide-group{display:flex;flex-direction:column;align-items:center;gap:6px}
+.slide-lbl{
+  color:#444;font-size:11px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* 1080×1350 → displayed at 50% = 540×675 */
+.clip{
+  width:540px;height:675px;overflow:hidden;
+  position:relative;border-radius:3px;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);
+}
+
+.slide{
+  width:1080px;height:1350px;
+  position:relative;overflow:hidden;
+  transform:scale(.5);transform-origin:top left;
+}
+
+/* ── Shared slide elements ── */
+.num{
+  position:absolute;top:60px;left:60px;
+  font-family:'Anton',sans-serif;font-size:120px;
+  color:#fff;line-height:1;z-index:20;
+}
+
+.orange-rule{
+  position:absolute;bottom:130px;
+  left:0;right:120px;
+  height:4px;background:var(--orange);z-index:20;
+}
+
+.arrow{
+  position:absolute;bottom:48px;right:48px;
+  width:92px;height:92px;
+  background:var(--orange);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  z-index:20;
+}
+.arrow svg{width:40px;height:40px;fill:none;stroke:#fff;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* White content box with orange typewriter text */
+.cbox{
+  position:absolute;bottom:160px;left:55px;
+  background:rgba(255,255,255,.97);
+  padding:32px 36px 32px 52px;
+  max-width:570px;z-index:20;
+}
+.cbox::before{
+  content:'•';
+  position:absolute;left:22px;top:34px;
+  color:var(--orange);font-size:32px;line-height:1;
+}
+.cbox p{
+  font-family:'Courier Prime',monospace;
+  font-size:29px;line-height:1.55;color:var(--orange);
+}
+
+/* Starburst SVG (re-used with different colours) */
+.star{position:absolute;top:-28px;right:-28px;z-index:10;opacity:.95}
+
+/* Three dots decoration */
+.dots{
+  position:absolute;top:72px;right:60px;
+  display:flex;gap:18px;z-index:20;
+}
+.dots span{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,.88);
+}
+
+/* ==========================================
+   SLIDE 1 — COVER
+   ========================================== */
+.s1{background:var(--brown)}
+
+.s1-geo1{
+  position:absolute;top:-220px;left:-180px;
+  width:720px;height:720px;
+  background:#3D2416;
+  transform:rotate(-25deg);z-index:1;
+}
+.s1-geo2{
+  position:absolute;top:80px;right:-220px;
+  width:520px;height:960px;
+  background:#3D2416;
+  transform:rotate(-25deg);z-index:1;
+}
+
+.s1-badge{
+  position:absolute;top:58px;left:58px;
+  background:var(--orange);color:#fff;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:34px;font-weight:600;
+  padding:14px 38px;border-radius:50px;
+  letter-spacing:.02em;z-index:20;
+}
+
+.s1-title{
+  position:absolute;top:165px;left:58px;right:58px;
+  z-index:20;line-height:.9;
+}
+.s1-line{
+  font-family:'Anton',sans-serif;
+  font-size:210px;color:#fff;
+  display:block;line-height:.88;
+}
+.s1-line.oj{color:var(--orange)}
+
+.s1-sub{
+  position:absolute;top:730px;left:58px;
+  z-index:20;
+}
+.s1-sub p{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:33px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+  color:#fff;line-height:1.45;
+}
+.s1-sub span{color:var(--orange)}
+
+.s1-frame{
+  position:absolute;bottom:155px;left:55px;right:55px;
+  height:370px;
+  background:linear-gradient(135deg,#1a1209 0%,#2d1f0f 50%,#1a1209 100%);
+  border-radius:4px;z-index:20;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.s1-frame::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 25% 50%,rgba(240,120,32,.18) 0%,transparent 55%),
+    radial-gradient(ellipse at 75% 50%,rgba(240,120,32,.12) 0%,transparent 50%);
+}
+.s1-frame-txt{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:38px;font-weight:700;
+  color:rgba(255,255,255,.18);
+  letter-spacing:.25em;text-transform:uppercase;
+  position:relative;z-index:1;
+}
+
+.s1-handle{
+  position:absolute;bottom:70px;left:58px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:28px;font-weight:600;
+  color:rgba(255,255,255,.75);z-index:20;
+}
+
+.s1-ailabel{
+  position:absolute;bottom:18px;left:58px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:24px;font-weight:500;
+  color:rgba(255,255,255,.4);z-index:20;
+}
+
+/* ==========================================
+   SLIDE 2 — Be Faceless & Free
+   ========================================== */
+.s2{
+  background:linear-gradient(155deg,#4c2e1a 0%,#1a0d06 45%,#301808 100%);
+}
+.s2-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 68% 38%,rgba(110,60,20,.55) 0%,transparent 58%);
+}
+.s2-title{
+  position:absolute;top:185px;left:58px;
+  z-index:20;line-height:.88;
+}
+.s2-l{font-family:'Anton',sans-serif;display:block;line-height:.88}
+.s2-l.oj{color:var(--orange);font-size:230px}
+.s2-l.wh{color:#fff;font-size:190px}
+
+/* ==========================================
+   SLIDE 3 — Scale Your Output 10x
+   ========================================== */
+.s3{background:#050505}
+
+.s3-title{
+  position:absolute;top:195px;left:58px;
+  z-index:20;
+}
+.s3-l{font-family:'Anton',sans-serif;display:block;line-height:.88}
+.s3-l.wh{color:#fff;font-size:210px}
+.s3-l.oj{color:var(--orange);font-size:210px}
+.s3-l.sm{color:#fff;font-size:150px}
+
+/* ==========================================
+   SLIDE 4 — Low Startup Cost
+   ========================================== */
+.s4{
+  background:linear-gradient(165deg,#3c2010 0%,#150a04 52%,#2c1a0e 100%);
+}
+.s4-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 62% 28%,rgba(88,46,12,.5) 0%,transparent 56%);
+}
+.s4-title{
+  position:absolute;top:160px;left:58px;
+  z-index:20;
+}
+.s4-l{font-family:'Anton',sans-serif;display:block;line-height:.88;font-size:205px;color:#fff}
+.s4-l.oj{color:var(--orange)}
+
+/* ==========================================
+   SLIDE 5 — Work From Anywhere
+   ========================================== */
+.s5{
+  background:linear-gradient(155deg,#252525 0%,#111 50%,#1c1c1c 100%);
+}
+.s5-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 62% 30%,rgba(50,50,50,.6) 0%,transparent 58%);
+}
+.s5-title{
+  position:absolute;top:200px;left:58px;
+  z-index:20;
+}
+.s5-l{font-family:'Anton',sans-serif;display:block;line-height:.88;font-size:208px;color:#fff}
+.s5-l.oj{color:var(--orange)}
+
+/* ==========================================
+   SLIDE 6 — Earn Brand Deals 24/7 + CTA
+   ========================================== */
+.s6{
+  background:linear-gradient(155deg,#4c2c00 0%,#1a0e00 45%,#2e1800 100%);
+}
+.s6-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 22%,rgba(110,56,0,.65) 0%,transparent 60%);
+}
+.s6-title{
+  position:absolute;top:160px;left:58px;
+  z-index:20;
+}
+.s6-l{font-family:'Anton',sans-serif;display:block;line-height:.88}
+.s6-l.wh{color:#fff;font-size:200px}
+.s6-l.oj{color:var(--orange);font-size:200px}
+.s6-l.sm{color:#fff;font-size:140px}
+
+.s6-cbox{
+  position:absolute;top:820px;left:55px;
+  background:rgba(255,255,255,.97);
+  padding:30px 36px 30px 52px;
+  max-width:630px;z-index:20;
+}
+.s6-cbox::before{
+  content:'•';
+  position:absolute;left:22px;top:32px;
+  color:var(--orange);font-size:32px;line-height:1;
+}
+.s6-cbox p{
+  font-family:'Courier Prime',monospace;
+  font-size:28px;line-height:1.5;color:var(--orange);
+}
+
+.s6-cta{
+  position:absolute;bottom:168px;left:55px;right:55px;
+  text-align:center;z-index:20;
+}
+.s6-cta p{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:34px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;
+  color:#fff;line-height:1.35;
+}
+
+.s6-handle{
+  position:absolute;bottom:52px;right:55px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:34px;font-weight:700;
+  color:rgba(255,255,255,.82);z-index:20;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+
+/* ── Print: one slide per page ── */
+@media print{
+  body{padding:0;background:#fff}
+  .pg-title,.pg-sub,.pg-hint,.pg-nav,.slide-lbl{display:none}
+  .slides-col{gap:0}
+  .slide-group{page-break-after:always;break-after:page;margin:0}
+  .clip{width:1080px;height:1350px;box-shadow:none}
+  .slide{transform:none}
+}
+</style>
+</head>
+<body>
+
+<h1 class="pg-title">AI UGC Advantages Carousel — @theugcmaverik</h1>
+<p class="pg-sub">6-slide Instagram Carousel · 1080 × 1350 px · Same color palette &amp; fonts as "A Day in The Life"</p>
+<p class="pg-hint">Screenshot each slide · Right-click → Save Image · Or use browser print for full-resolution export</p>
+
+<nav class="pg-nav">
+  <a href="#s1">1 Cover</a>
+  <a href="#s2">2 Faceless</a>
+  <a href="#s3">3 Scale</a>
+  <a href="#s4">4 Low Cost</a>
+  <a href="#s5">5 Anywhere</a>
+  <a href="#s6">6 Earn + CTA</a>
+</nav>
+
+<!-- SVG defs for starburst shapes (reused) -->
+<svg style="display:none">
+  <defs>
+    <!-- Beige starburst (8 arms) -->
+    <g id="star-beige">
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(0)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(22.5)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(45)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(67.5)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(90)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(112.5)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(135)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#C5AE8E" transform="rotate(157.5)"/>
+    </g>
+    <!-- Purple starburst (8 arms) -->
+    <g id="star-purple">
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(0)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(22.5)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(45)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(67.5)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(90)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(112.5)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(135)"/>
+      <rect x="-11" y="-85" width="22" height="170" rx="11" fill="#3B1F6B" transform="rotate(157.5)"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="slides-col">
+
+  <!-- ============================
+       SLIDE 1 — COVER
+       ============================ -->
+  <div class="slide-group" id="s1">
+    <div class="slide-lbl">Slide 1 of 6 — Cover</div>
+    <div class="clip">
+      <div class="slide s1">
+        <div class="s1-geo1"></div>
+        <div class="s1-geo2"></div>
+
+        <!-- Beige starburst -->
+        <svg class="star" width="210" height="210" viewBox="-28 -28 256 256">
+          <use href="#star-beige" transform="translate(100,100)"/>
+        </svg>
+
+        <!-- Orange badge -->
+        <div class="s1-badge">AI UGC Creator Tips</div>
+
+        <!-- Giant title -->
+        <div class="s1-title">
+          <span class="s1-line">The AI</span>
+          <span class="s1-line">UGC</span>
+          <span class="s1-line oj">Advantage</span>
+        </div>
+
+        <!-- Subtitle -->
+        <div class="s1-sub">
+          <p>6 REASONS CREATORS ARE<br/><span>GOING AI &amp; WINNING</span></p>
+        </div>
+
+        <!-- Photo-frame placeholder -->
+        <div class="s1-frame">
+          <span class="s1-frame-txt">AI · UGC · CREATOR</span>
+        </div>
+
+        <!-- Orange rule -->
+        <div class="orange-rule"></div>
+
+        <!-- Handle -->
+        <div class="s1-handle">📱 @theugcmaverik</div>
+
+        <!-- Arrow -->
+        <div class="arrow">
+          <svg viewBox="0 0 24 24"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </div>
+
+        <!-- AI-generated label -->
+        <div class="s1-ailabel">AI-generated</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SLIDE 2 — Be Faceless & Free
+       ============================ -->
+  <div class="slide-group" id="s2">
+    <div class="slide-lbl">Slide 2 of 6 — Advantage 1: Be 100% Faceless</div>
+    <div class="clip">
+      <div class="slide s2">
+        <div class="s2-glow"></div>
+
+        <div class="num">1.</div>
+
+        <div class="s2-title">
+          <span class="s2-l oj">Faceless</span>
+          <span class="s2-l wh">&amp; Free</span>
+        </div>
+
+        <div class="cbox">
+          <p>No camera anxiety. No bad hair days. AI tools let you produce premium UGC without ever showing your face.</p>
+        </div>
+
+        <div class="orange-rule"></div>
+        <div class="arrow">
+          <svg viewBox="0 0 24 24"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SLIDE 3 — Scale Your Output 10x
+       ============================ -->
+  <div class="slide-group" id="s3">
+    <div class="slide-lbl">Slide 3 of 6 — Advantage 2: Scale 10x Faster</div>
+    <div class="clip">
+      <div class="slide s3">
+
+        <!-- Purple starburst -->
+        <svg class="star" width="230" height="230" viewBox="-28 -28 256 256">
+          <use href="#star-purple" transform="translate(100,100)"/>
+        </svg>
+
+        <div class="num">2.</div>
+
+        <div class="s3-title">
+          <span class="s3-l wh">Scale</span>
+          <span class="s3-l wh">Your</span>
+          <span class="s3-l oj">Output</span>
+          <span class="s3-l sm">10x Faster</span>
+        </div>
+
+        <div class="cbox">
+          <p>What takes traditional creators a week, you produce in hours. AI generates scripts, voiceovers &amp; visuals on demand.</p>
+        </div>
+
+        <div class="orange-rule"></div>
+        <div class="arrow">
+          <svg viewBox="0 0 24 24"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SLIDE 4 — Low Startup Cost
+       ============================ -->
+  <div class="slide-group" id="s4">
+    <div class="slide-lbl">Slide 4 of 6 — Advantage 3: Low Startup Cost</div>
+    <div class="clip">
+      <div class="slide s4">
+        <div class="s4-glow"></div>
+
+        <div class="num">3.</div>
+
+        <div class="s4-title">
+          <span class="s4-l">Low</span>
+          <span class="s4-l oj">Startup</span>
+          <span class="s4-l">Cost</span>
+        </div>
+
+        <div class="cbox">
+          <p>No studio. No camera. No lighting rig. A laptop, a few AI tools, and WiFi are your entire business setup.</p>
+        </div>
+
+        <div class="orange-rule"></div>
+        <div class="arrow">
+          <svg viewBox="0 0 24 24"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SLIDE 5 — Work From Anywhere
+       ============================ -->
+  <div class="slide-group" id="s5">
+    <div class="slide-lbl">Slide 5 of 6 — Advantage 4: Work From Anywhere</div>
+    <div class="clip">
+      <div class="slide s5">
+        <div class="s5-glow"></div>
+
+        <!-- 3 dots decoration -->
+        <div class="dots">
+          <span></span><span></span><span></span>
+        </div>
+
+        <div class="num">4.</div>
+
+        <div class="s5-title">
+          <span class="s5-l">Work</span>
+          <span class="s5-l">From</span>
+          <span class="s5-l oj">Anywhere</span>
+        </div>
+
+        <div class="cbox">
+          <p>Coffee shop, beach, home office — your AI studio goes wherever you go. Maximum freedom, zero location limits.</p>
+        </div>
+
+        <div class="orange-rule"></div>
+        <div class="arrow">
+          <svg viewBox="0 0 24 24"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SLIDE 6 — Earn Brand Deals + CTA
+       ============================ -->
+  <div class="slide-group" id="s6">
+    <div class="slide-lbl">Slide 6 of 6 — Advantage 5: Earn Brand Deals + CTA</div>
+    <div class="clip">
+      <div class="slide s6">
+        <div class="s6-glow"></div>
+
+        <div class="num">5.</div>
+
+        <div class="s6-title">
+          <span class="s6-l oj">Earn</span>
+          <span class="s6-l wh">Brand</span>
+          <span class="s6-l wh">Deals</span>
+          <span class="s6-l sm">on autopilot</span>
+        </div>
+
+        <div class="s6-cbox">
+          <p>Your AI content works 24/7. Brands pay for results — and AI UGC delivers them while you sleep.</p>
+        </div>
+
+        <div class="s6-cta">
+          <p>Ready to start your AI UGC journey?<br/>Drop a 🤖 in the comments!</p>
+        </div>
+
+        <div class="orange-rule" style="right:0"></div>
+
+        <div class="s6-handle">@THEUGCMAVERIK</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slides-col -->
+
+</body>
+</html>
