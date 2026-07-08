@@ -3,20 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reels Generator — @theugcmaverik</title>
+  <title>TOOL NAME — @theugcmaverik</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
   <style>
     /* =====================================================
-       PASTE YOUR CLOUDFLARE WORKER URL ON LINE BELOW:
-       Find:   const WORKER_URL = 'YOUR_WORKER_URL_HERE';
-       Replace with your actual Worker URL, e.g.:
-               const WORKER_URL = 'https://reels-proxy.yourname.workers.dev';
+       STARTER TEMPLATE — based on the Reels Generator pattern
+       Steps to reuse for a new tool:
+       1. Change the <title> and the CONFIG block in the script below
+       2. Recolor the CSS variables in :root if this tool needs its own look
+       3. Update the SYSTEM prompt to match what this tool should generate
+       4. Update the chips to match this tool's presets
+       5. Deploy a new Worker for this tool, paste its URL into WORKER_URL
     ===================================================== */
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      /* Swap these per tool if you want a different look.
+         Defaults below match the Reels Generator. */
       --bg: #0f0f0f;
       --surface: #1a1a1a;
       --surface2: #242424;
@@ -158,22 +163,20 @@
 
     <header>
       <div class="brand">@theugcmaverik</div>
-      <h1>Reels Script Generator</h1>
-      <p class="tagline">Scroll-stopping scripts in seconds — AI UGC, beauty, lifestyle &amp; tech</p>
+      <h1>TOOL NAME</h1>
+      <p class="tagline">One line describing what this tool generates</p>
     </header>
 
     <div class="input-row">
-      <input type="text" id="topicIn" value="Faceless AI UGC content" placeholder="Enter any topic..." />
-      <button class="primary" onclick="generate()" id="genBtn">Generate scripts</button>
+      <input type="text" id="topicIn" value="" placeholder="Enter any topic..." />
+      <button class="primary" onclick="generate()" id="genBtn">Generate</button>
     </div>
 
     <div class="chips" id="chips">
-      <span class="chip active" onclick="pick(this,'Faceless AI UGC content')">Faceless AI UGC</span>
-      <span class="chip" onclick="pick(this,'AI avatar tools for creators')">AI avatar tools</span>
-      <span class="chip" onclick="pick(this,'Affiliate marketing with faceless content')">Affiliate + faceless</span>
-      <span class="chip" onclick="pick(this,'Skincare UGC with AI')">Skincare UGC</span>
-      <span class="chip" onclick="pick(this,'How to earn money as a faceless creator')">Earn as faceless creator</span>
-      <span class="chip" onclick="pick(this,'AI tools for beauty and lifestyle creators')">AI + beauty</span>
+      <!-- Swap these for this tool's presets. Each onclick calls pick(this, 'value') -->
+      <span class="chip active" onclick="pick(this,'Preset topic one')">Preset one</span>
+      <span class="chip" onclick="pick(this,'Preset topic two')">Preset two</span>
+      <span class="chip" onclick="pick(this,'Preset topic three')">Preset three</span>
     </div>
 
     <div class="status" id="status"></div>
@@ -181,7 +184,7 @@
     <div class="grid" id="grid">
       <div class="empty">
         <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9A2.25 2.25 0 0013.5 5.25h-9A2.25 2.25 0 002.25 7.5v9A2.25 2.25 0 004.5 18.75z"/></svg>
-        Hit "Generate scripts" to create 4 scroll-stopping Reels
+        Hit "Generate" to create results
       </div>
     </div>
 
@@ -189,25 +192,29 @@
 
   <script>
     // =====================================================
-    // PASTE YOUR CLOUDFLARE WORKER URL HERE:
-    const WORKER_URL = 'https://reels-proxy.theugcmaverik.workers.dev';
-    // Example: 'https://reels-proxy.yourname.workers.dev'
+    // CONFIG — the four things you change per new tool
     // =====================================================
 
-    const SYSTEM = `You are a Reels/TikTok/Shorts script generator for AI UGC and faceless creators.
-Tone: conversational, high-energy, creator-friendly. Niches: AI UGC, faceless creators, beauty, lifestyle, tech.
-No corporate language. No long sentences. Each script must be under 12 seconds when read aloud.
+    // 1. Paste this tool's own Cloudflare Worker URL (each tool gets its own Worker)
+    const WORKER_URL = 'YOUR_WORKER_URL_HERE';
+
+    // 2. Tell Claude what this tool should produce.
+    //    Keep the "return ONLY valid JSON" instruction, just change the fields
+    //    and rules to match this tool's output.
+    const SYSTEM = `You are a [DESCRIBE THE TOOL'S JOB] for @theugcmaverik.
+Tone: conversational, high-energy, creator-friendly.
 Return ONLY a valid JSON array of exactly 4 objects. No markdown, no backticks, no preamble.
 Each object must have:
-- hook: string (1 punchy sentence, max 12 words)
-- problem: string (1 sentence on viewer struggle, max 12 words)
-- value: array of exactly 3 strings (fast tips, max 8 words each)
-- cta: string (1 clear action, max 10 words)
-- angle: string (2-3 word creative label)
-- seconds: number between 8 and 12`;
+- fieldOne: string
+- fieldTwo: string
+- fieldThree: array of strings
+- fieldFour: string`;
+
+    // 3. Update this if the JSON shape above changes (used to render cards below)
+    // 4. Update the user-facing prompt sent per generation, in generate() below
 
     let busy = false;
-    window._scripts = [];
+    window._items = [];
 
     function pick(el, val) {
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -216,34 +223,28 @@ Each object must have:
     }
 
     function copyCard(i) {
-      const s = window._scripts[i];
-      const t = `HOOK: ${s.hook}\n\nPROBLEM: ${s.problem}\n\nVALUE:\n– ${s.value[0]}\n– ${s.value[1]}\n– ${s.value[2]}\n\nCTA: ${s.cta}`;
+      const s = window._items[i];
+      const t = JSON.stringify(s, null, 2); // simple default — customize per tool's fields
       navigator.clipboard.writeText(t).then(() => {
         const b = document.getElementById('cp' + i);
         if (b) { b.textContent = 'Copied!'; b.classList.add('copied'); setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('copied'); }, 1800); }
       });
     }
 
-    function renderCards(scripts) {
+    function renderCards(items) {
       const g = document.getElementById('grid');
       g.innerHTML = '';
-      scripts.forEach((s, i) => {
+      items.forEach((s, i) => {
         const d = document.createElement('div');
         d.className = 'card';
+        // Customize this markup to match the fields defined in SYSTEM above
         d.innerHTML = `
           <div class="card-top">
-            <span class="card-meta">Script ${i + 1} &middot; ${s.angle || ''}</span>
-            <span class="timer">~${s.seconds}s</span>
+            <span class="card-meta">Result ${i + 1}</span>
           </div>
-          <div><div class="slabel">Hook</div><span class="badge b-hook">Stop scroll</span><div class="stext">${s.hook}</div></div>
-          <div><div class="slabel">Problem</div><span class="badge b-prob">Pain point</span><div class="stext">${s.problem}</div></div>
-          <div>
-            <div class="slabel">Value</div><span class="badge b-val">Tips</span>
-            <ul class="vlist"><li>${s.value[0]}</li><li>${s.value[1]}</li><li>${s.value[2]}</li></ul>
-          </div>
-          <div><div class="slabel">CTA</div><span class="badge b-cta">Action</span><div class="stext">${s.cta}</div></div>
+          <div class="stext">${JSON.stringify(s)}</div>
           <div class="card-foot">
-            <span class="ready">Ready to film</span>
+            <span class="ready">Ready</span>
             <button class="copy" id="cp${i}" onclick="copyCard(${i})">Copy</button>
           </div>`;
         g.appendChild(d);
@@ -257,12 +258,12 @@ Each object must have:
         return;
       }
       busy = true;
-      const topic = document.getElementById('topicIn').value.trim() || 'Faceless AI UGC content';
+      const topic = document.getElementById('topicIn').value.trim() || 'default topic';
       const btn = document.getElementById('genBtn');
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span>Generating...';
-      document.getElementById('status').textContent = 'Writing 4 scripts with different angles...';
-      document.getElementById('grid').innerHTML = '<div class="empty"><span class="spinner"></span> Claude is writing your scripts...</div>';
+      document.getElementById('status').textContent = 'Working on it...';
+      document.getElementById('grid').innerHTML = '<div class="empty"><span class="spinner"></span> Claude is generating...</div>';
 
       try {
         const res = await fetch(WORKER_URL, {
@@ -272,7 +273,7 @@ Each object must have:
             model: 'claude-sonnet-4-6',
             max_tokens: 1000,
             system: SYSTEM,
-            messages: [{ role: 'user', content: `Generate 4 Reels scripts about: "${topic}". Each must have a DIFFERENT creative angle. Return only the JSON array.` }]
+            messages: [{ role: 'user', content: `Generate results about: "${topic}". Return only the JSON array.` }]
           })
         });
 
@@ -281,19 +282,19 @@ Each object must have:
         if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
 
         const raw = (data.content?.[0]?.text || '').replace(/```json|```/g, '').trim();
-        const scripts = JSON.parse(raw);
-        window._scripts = scripts;
-        renderCards(scripts);
-        document.getElementById('status').textContent = '4 scripts ready — click Copy on any card to grab the full script';
+        const items = JSON.parse(raw);
+        window._items = items;
+        renderCards(items);
+        document.getElementById('status').textContent = 'Results ready — click Copy on any card';
 
       } catch (e) {
-        document.getElementById('grid').innerHTML = `<div class="empty">Could not generate scripts.<div class="error-msg">${e.message}</div></div>`;
+        document.getElementById('grid').innerHTML = `<div class="empty">Could not generate.<div class="error-msg">${e.message}</div></div>`;
         document.getElementById('status').textContent = '';
         console.error(e);
       }
 
       btn.disabled = false;
-      btn.textContent = 'Generate scripts';
+      btn.textContent = 'Generate';
       busy = false;
     }
 
