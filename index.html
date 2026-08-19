@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reels Generator - theugcmaverik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#f0f0f0;--muted:#888;
+  --accent:#a78bfa;--accent-dim:rgba(167,139,250,0.12);
+  --green:#34d399;--green-dim:rgba(52,211,153,0.12);
+  --coral:#fb923c;--coral-dim:rgba(251,146,60,0.12);
+  --amber:#fbbf24;--amber-dim:rgba(251,191,36,0.12);
+  --radius:12px;--radius-sm:8px
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:2rem 1rem 4rem}
+.container{max-width:860px;margin:0 auto}
+header{text-align:center;margin-bottom:2.5rem}
+.brand{font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:600;letter-spacing:-.02em;margin-bottom:8px}
+.tagline{font-size:15px;color:var(--muted)}
+.input-row{display:flex;gap:10px;margin-bottom:1rem}
+.input-row input{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:0 14px;height:44px;font-size:15px;color:var(--text);font-family:inherit;transition:border-color .15s}
+.input-row input:focus{outline:none;border-color:var(--accent)}
+.input-row input::placeholder{color:var(--muted)}
+button.primary{background:var(--accent);color:#0f0f0f;border:none;border-radius:var(--radius-sm);padding:0 20px;height:44px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+button.primary:hover{opacity:.88}
+button.primary:disabled{opacity:.4;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.75rem}
+.chip{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;font-family:inherit}
+.chip:hover,.chip.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+.status{font-size:13px;color:var(--muted);min-height:20px;margin-bottom:1.25rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.4rem;display:flex;flex-direction:column;gap:12px}
+.card-top{display:flex;justify-content:space-between;align-items:center}
+.card-meta{font-size:11px;color:var(--muted);font-weight:500}
+.timer{font-size:11px;color:var(--muted)}
+.slabel{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.stext{font-size:14px;line-height:1.55;color:var(--text)}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;margin-bottom:5px;letter-spacing:.03em;text-transform:uppercase}
+.b-hook{background:var(--accent-dim);color:var(--accent)}
+.b-prob{background:var(--coral-dim);color:var(--coral)}
+.b-val{background:var(--green-dim);color:var(--green)}
+.b-cta{background:var(--amber-dim);color:var(--amber)}
+.vlist{padding-left:1.1rem}
+.vlist li{font-size:14px;line-height:1.65;color:var(--text)}
+.card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);margin-top:4px}
+.ready{font-size:11px;color:var(--muted)}
+button.copy{font-size:12px;font-weight:500;font-family:inherit;padding:5px 14px;border-radius:6px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);cursor:pointer;transition:all .15s}
+button.copy:hover{border-color:var(--accent);color:var(--accent)}
+button.copy.copied{color:var(--green);border-color:var(--green)}
+.empty{grid-column:1/-1;text-align:center;padding:4rem 1rem;color:var(--muted);font-size:14px}
+.error-msg{color:#f87171;font-size:12px;margin-top:6px}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(167,139,250,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.input-row{flex-direction:column}button.primary{width:100%}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="brand">@theugcmaverik</div>
+    <h1>Reels Script Generator</h1>
+    <p class="tagline">Scroll-stopping scripts in seconds &mdash; AI UGC, beauty, lifestyle &amp; tech</p>
+  </header>
+
+  <div class="input-row">
+    <input type="text" id="topicIn" value="Faceless AI UGC content" placeholder="Enter any topic..." />
+    <button class="primary" id="genBtn" onclick="generate()">Generate scripts</button>
+  </div>
+
+  <div class="chips">
+    <span class="chip active" onclick="pick(this,'Faceless AI UGC content')">Faceless AI UGC</span>
+    <span class="chip" onclick="pick(this,'AI avatar tools for creators')">AI avatar tools</span>
+    <span class="chip" onclick="pick(this,'Affiliate marketing with faceless content')">Affiliate + faceless</span>
+    <span class="chip" onclick="pick(this,'Skincare UGC with AI')">Skincare UGC</span>
+    <span class="chip" onclick="pick(this,'How to earn money as a faceless creator')">Earn as faceless creator</span>
+    <span class="chip" onclick="pick(this,'AI tools for beauty and lifestyle creators')">AI + beauty</span>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="grid" id="grid">
+    <div class="empty">
+      <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto 14px;opacity:.25"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9A2.25 2.25 0 0013.5 5.25h-9A2.25 2.25 0 002.25 7.5v9A2.25 2.25 0 004.5 18.75z"/></svg>
+      Hit "Generate scripts" to create 4 scroll-stopping Reels
+    </div>
+  </div>
+
+</div>
+<script>
+// ==========================================================
+// STEP 1: Replace the URL below with your Cloudflare Worker URL
+// Example: var WORKER_URL = 'https://reels-proxy.yourname.workers.dev';
+// ==========================================================
+var WORKER_URL = 'YOUR_WORKER_URL_HERE';
+
+var SYSTEM_PROMPT = 'You are a Reels/TikTok/Shorts script generator for AI UGC and faceless creators. '
+  + 'Tone: conversational, high-energy, creator-friendly. '
+  + 'Niches: AI UGC, faceless creators, beauty, lifestyle, tech. '
+  + 'No corporate language. No long sentences. Each script must be under 12 seconds when read aloud. '
+  + 'Return ONLY a valid JSON array of exactly 4 objects. No markdown, no backticks, no preamble. '
+  + 'Each object must have: '
+  + 'hook (string, 1 punchy sentence max 12 words), '
+  + 'problem (string, 1 sentence on viewer struggle max 12 words), '
+  + 'value (array of exactly 3 strings, fast tips max 8 words each), '
+  + 'cta (string, 1 clear action max 10 words), '
+  + 'angle (string, 2-3 word creative label), '
+  + 'seconds (number between 8 and 12).';
+
+var busy = false;
+window._scripts = [];
+
+function pick(el, val) {
+  var chips = document.querySelectorAll('.chip');
+  for (var i = 0; i < chips.length; i++) { chips[i].classList.remove('active'); }
+  el.classList.add('active');
+  document.getElementById('topicIn').value = val;
+}
+
+function copyCard(i) {
+  var s = window._scripts[i];
+  var t = 'HOOK: ' + s.hook + '\n\nPROBLEM: ' + s.problem
+    + '\n\nVALUE:\n- ' + s.value[0] + '\n- ' + s.value[1] + '\n- ' + s.value[2]
+    + '\n\nCTA: ' + s.cta;
+  navigator.clipboard.writeText(t).then(function() {
+    var b = document.getElementById('cp' + i);
+    if (b) {
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function() { b.textContent = 'Copy'; b.classList.remove('copied'); }, 1800);
+    }
+  });
+}
+
+function renderCards(scripts) {
+  var g = document.getElementById('grid');
+  g.innerHTML = '';
+  for (var i = 0; i < scripts.length; i++) {
+    var s = scripts[i];
+    var d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = '<div class="card-top">'
+      + '<span class="card-meta">Script ' + (i + 1) + ' &middot; ' + (s.angle || '') + '</span>'
+      + '<span class="timer">~' + s.seconds + 's</span>'
+      + '</div>'
+      + '<div><div class="slabel">Hook</div><span class="badge b-hook">Stop scroll</span><div class="stext">' + s.hook + '</div></div>'
+      + '<div><div class="slabel">Problem</div><span class="badge b-prob">Pain point</span><div class="stext">' + s.problem + '</div></div>'
+      + '<div><div class="slabel">Value</div><span class="badge b-val">Tips</span>'
+      + '<ul class="vlist"><li>' + s.value[0] + '</li><li>' + s.value[1] + '</li><li>' + s.value[2] + '</li></ul></div>'
+      + '<div><div class="slabel">CTA</div><span class="badge b-cta">Action</span><div class="stext">' + s.cta + '</div></div>'
+      + '<div class="card-foot"><span class="ready">Ready to film</span>'
+      + '<button class="copy" id="cp' + i + '" onclick="copyCard(' + i + ')">Copy</button></div>';
+    g.appendChild(d);
+  }
+}
+
+function generate() {
+  if (busy) return;
+  if (WORKER_URL === 'YOUR_WORKER_URL_HERE') {
+    document.getElementById('status').innerHTML = '<span style="color:#f87171;">Paste your Cloudflare Worker URL into the WORKER_URL variable at the top of the script tag.</span>';
+    return;
+  }
+  busy = true;
+  var topic = document.getElementById('topicIn').value.trim() || 'Faceless AI UGC content';
+  var btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generating...';
+  document.getElementById('status').textContent = 'Writing 4 scripts with different angles...';
+  document.getElementById('grid').innerHTML = '<div class="empty"><span class="spinner"></span>Claude is writing your scripts...</div>';
+
+  fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: 'Generate 4 Reels scripts about: "' + topic + '". Each must have a DIFFERENT creative angle. Return only the JSON array.' }]
+    })
+  })
+  .then(function(res) {
+    if (!res.ok) { throw new Error('Worker returned ' + res.status); }
+    return res.json();
+  })
+  .then(function(data) {
+    if (data.error) { throw new Error(data.error.message || JSON.stringify(data.error)); }
+    var raw = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
+    raw = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+    var scripts = JSON.parse(raw);
+    window._scripts = scripts;
+    renderCards(scripts);
+    document.getElementById('status').textContent = '4 scripts ready - click Copy on any card';
+  })
+  .catch(function(e) {
+    document.getElementById('grid').innerHTML = '<div class="empty">Could not generate scripts.<div class="error-msg">' + e.message + '</div></div>';
+    document.getElementById('status').textContent = '';
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = 'Generate scripts';
+    busy = false;
+  });
+}
+
+document.getElementById('topicIn').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { generate(); }
+});
+</script>
+</body>
+</html>
